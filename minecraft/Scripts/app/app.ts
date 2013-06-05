@@ -16,7 +16,7 @@ interface KnockoutBindingHandlers {
 
 ko.bindingHandlers.drag = {
 	"update": function (element, valueAccessor, allBindingsAccessor, viewModel) {
-		var newValue : app.types.InventoryItem = ko.utils.unwrapObservable(valueAccessor());
+		var newValue: app.types.InventoryItem = ko.utils.unwrapObservable(valueAccessor());
 		var $element = $(element);
 		var elementIsDraggable = (typeof $(element).data("ui-draggable") !== "undefined");
 
@@ -39,7 +39,7 @@ ko.bindingHandlers.drag = {
 				"revertDuration": 0,
 				"start": function () {
 					//var draggedFrom: app.types.ui.BuildTableDropTarget = ko.dataFor(element);
-					//debugger;
+					
 					// dragged from should be a drop target w/ an x and a y
 
 					ko.bindingHandlers.drag.state.hitDropTarget = false;
@@ -57,9 +57,9 @@ ko.bindingHandlers.drag = {
 					ko.bindingHandlers.drag.state.draggedObject.inHand(false);
 					// clear out the state since we're not maintaining it anymore
 					ko.bindingHandlers.drag.state.draggedObject =
-						ko.bindingHandlers.drag.state.hitDropTarget = 
+						ko.bindingHandlers.drag.state.hitDropTarget =
 						ko.bindingHandlers.drag.state.draggedObjectFrom = null;
-					
+
 					//draggedObject = null;
 				},
 				"cursor": 'move'
@@ -101,13 +101,13 @@ ko.bindingHandlers.drop = {
 
 module app {
 
-	export var init = function () {
-
+	export var init = function (useDemoBuildTable: Boolean = true) {
+		
 		console.log("app.init");
 
 		app.world.init();
 
-		app.viewModel.init();
+		app.viewModel.init(useDemoBuildTable);
 
 		ko.applyBindings(app.viewModel, $("#content")[0]);
 
@@ -166,14 +166,14 @@ module app.types {
 					this.buildList[thisItemName] = (this.buildList[thisItemName] || 0) + 1;
 				}
 			}
-			
+
 			this.buildString = JSON.stringify(this.buildMatrix);
 		}
 	}
 
 	/** represents an item in the inventory, in inventory it has qty and will probably have more later on */
 	export class InventoryItem {
-		
+
 		public qty: KnockoutObservableNumber = ko.observable(0);
 		public inHand: KnockoutObservableBool = ko.observable(false);
 		public item: Item = null;
@@ -187,7 +187,7 @@ module app.types {
 
 			this.item = item;
 			this.qty(qty);
-			
+
 
 		}
 	}
@@ -203,7 +203,7 @@ module app.types {
 			public item: KnockoutObservableAny = ko.observable(null);
 			public hasDropItem: KnockoutComputed = null;
 			public hasDropItemInHand: KnockoutComputed = null;
-			
+
 			constructor(x: number, y: number) {
 				var _this = this;
 				_this.x = x;
@@ -224,7 +224,7 @@ module app.types {
 				}, _this);
 
 				_this.hasDropItemInHand = ko.computed(function () {
-					var thisItem : app.types.InventoryItem = _this.item();
+					var thisItem: app.types.InventoryItem = _this.item();
 					return (thisItem === null) ? false : thisItem.inHand();
 				}, _this);
 			}
@@ -313,7 +313,7 @@ module app.world {
 
 	}
 
-	
+
 
 
 
@@ -323,7 +323,7 @@ module app.viewModel {
 
 	export module ui {
 
-		export var init = function (): void {
+		export var init = function (useDemoBuildTable: Boolean): void {
 			console.log("app.viewModel.ui.init");
 
 			// create all of the targets with the right x/y coordinates
@@ -333,11 +333,11 @@ module app.viewModel {
 				}
 			}
 
-			buildTable[0].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.stick], 1));
-			buildTable[1].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.stick], 1));
-
-
-			buildTable[3].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.ironIngot], 1));
+			if (useDemoBuildTable === true) {
+				buildTable[0].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.stick], 1));
+				buildTable[1].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.stick], 1));
+				buildTable[3].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.ironIngot], 1));
+			}
 
 			//#region tableImage computed body
 			currentBuildString = ko.computed(function () {
@@ -350,14 +350,14 @@ module app.viewModel {
 					var itemInBuildSlot: app.types.InventoryItem = buildSlot.item();
 
 					var itemToPutInArray: string = (itemInBuildSlot === null) ? null : itemInBuildSlot.item.name;
-					
+
 					buildMatrix[buildSlot.y].push(itemToPutInArray);
 				}
 
 				return JSON.stringify(buildMatrix);
 			});
 			//#endregion
-			
+
 			//#region buildableResult body
 			buildableResult = ko.computed(function () {
 
@@ -387,10 +387,10 @@ module app.viewModel {
 		export var buildableResult: KnockoutComputed = null;
 	}
 
-	export var init = function (): void {
+	export var init = function (useDemoBuildTable: Boolean): void {
 		console.log("app.viewModel.init");
 
-		app.viewModel.ui.init();
+		app.viewModel.ui.init(useDemoBuildTable);
 
 		addItemToInventory(app.world.itemNames.stone, 1);
 		addItemToInventory(app.world.itemNames.ironIngot, 1);
@@ -459,7 +459,7 @@ module app.viewModel {
 
 	};
 
-	
+
 	export var inventory: KnockoutObservableArray = ko.observableArray([]);
 
 	export var inventoryLookup: KnockoutComputed;
@@ -510,6 +510,3 @@ module app.viewModel {
 }
 
 
-$(function () {
-	app.init();
-});

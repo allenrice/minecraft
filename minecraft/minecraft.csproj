@@ -17,6 +17,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="Content\jasmine\jasmine.css" />
+    <Content Include="Content\jasmine\jasmine_favicon.png" />
     <Content Include="Content\themes\base\images\animated-overlay.gif" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
@@ -84,10 +86,17 @@
       <DependentUpon>app.ts</DependentUpon>
     </Content>
     <Content Include="packages.config" />
+    <TypeScriptCompile Include="Scripts\app\app.tests.ts" />
+    <Content Include="Scripts\app\app.tests.js">
+      <DependentUpon>app.tests.ts</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jasmine\jasmine-html.js" />
+    <Content Include="Scripts\jasmine\jasmine.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.min.js" />
     <Content Include="Scripts\knockout-2.2.1.debug.js" />
     <Content Include="Scripts\knockout-2.2.1.js" />
+    <Content Include="Scripts\typings\jasmine\jasmine.d.ts" />
     <Content Include="Scripts\typings\jqueryui\jqueryui.d.ts" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
     <Content Include="Scripts\typings\knockout\knockout.amd.d.ts" />
@@ -97,6 +106,7 @@
     <Content Include="Scripts\jquery-2.0.1.min.js" />
     <Content Include="Scripts\jquery-2.0.1.min.map" />
     <Content Include="web.config" />
+    <Content Include="jasmine.htm" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

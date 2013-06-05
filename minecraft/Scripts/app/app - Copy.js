@@ -20,6 +20,7 @@ ko.bindingHandlers.drag = {
                 "revertDuration": 0,
                 "start": function () {
                     //var draggedFrom: app.types.ui.BuildTableDropTarget = ko.dataFor(element);
+                    //debugger;
                     // dragged from should be a drop target w/ an x and a y
                     ko.bindingHandlers.drag.state.hitDropTarget = false;
                     ko.bindingHandlers.drag.state.draggedObject = draggedObject;
@@ -71,11 +72,10 @@ ko.bindingHandlers.drop = {
 //#endregoin
 var app;
 (function (app) {
-    app.init = function (useDemoBuildTable) {
-        if (typeof useDemoBuildTable === "undefined") { useDemoBuildTable = true; }
+    app.init = function () {
         console.log("app.init");
         app.world.init();
-        app.viewModel.init(useDemoBuildTable);
+        app.viewModel.init();
         ko.applyBindings(app.viewModel, $("#content")[0]);
     };
 })(app || (app = {}));
@@ -298,7 +298,7 @@ var app;
 (function (app) {
     (function (viewModel) {
         (function (ui) {
-            ui.init = function (useDemoBuildTable) {
+            ui.init = function () {
                 console.log("app.viewModel.ui.init");
                 // create all of the targets with the right x/y coordinates
                 for(var i = 0; i < 3; i++) {
@@ -306,11 +306,9 @@ var app;
                         ui.buildTable.push(new app.types.ui.BuildTableDropTarget(j, i));
                     }
                 }
-                if(useDemoBuildTable === true) {
-                    ui.buildTable[0].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.stick], 1));
-                    ui.buildTable[1].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.stick], 1));
-                    ui.buildTable[3].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.ironIngot], 1));
-                }
+                ui.buildTable[0].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.stick], 1));
+                ui.buildTable[1].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.stick], 1));
+                ui.buildTable[3].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.ironIngot], 1));
                 //#region tableImage computed body
                 ui.currentBuildString = ko.computed(function () {
                     var buildMatrix = [
@@ -350,9 +348,9 @@ var app;
             ui.buildableResult = null;
         })(viewModel.ui || (viewModel.ui = {}));
         var ui = viewModel.ui;
-        viewModel.init = function (useDemoBuildTable) {
+        viewModel.init = function () {
             console.log("app.viewModel.init");
-            app.viewModel.ui.init(useDemoBuildTable);
+            app.viewModel.ui.init();
             addItemToInventory(app.world.itemNames.stone, 1);
             addItemToInventory(app.world.itemNames.ironIngot, 1);
             addItemToInventory(app.world.itemNames.stick, 2);
@@ -439,4 +437,7 @@ var app;
     })(app.viewModel || (app.viewModel = {}));
     var viewModel = app.viewModel;
 })(app || (app = {}));
-//@ sourceMappingURL=app.js.map
+$(function () {
+    app.init();
+});
+//@ sourceMappingURL=app - Copy.js.map
