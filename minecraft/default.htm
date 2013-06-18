@@ -2,24 +2,34 @@
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="utf-8" />
-    <title>TypeScript HTML App</title>
-    <link rel="stylesheet" href="Content/app.css" type="text/css" />
+	<meta charset="utf-8" />
+	<title>TypeScript HTML App</title>
+	<link rel="stylesheet" href="Content/app.css" type="text/css" />
 
 	<script src="Scripts/jquery-2.0.1.js"></script>
 	<script src="Scripts/jquery-ui-1.10.3.js"></script>
-    <script src="Scripts/knockout-2.2.1.js"></script>
+	<script src="Scripts/knockout-2.2.1.js"></script>
+	
 	<script src="Scripts/app/app.js"></script>
+	<script src="Scripts/app/app.types.js"></script>
+	<script src="Scripts/app/app.types.ui.js"></script>
+	<script src="Scripts/app/app.world.js"></script>
+	<script src="Scripts/app/app.viewModel.js"></script>
+	<script src="Scripts/app/app.viewModel.ui.js"></script>
+	<script src="Scripts/app/app.genericContainerBindingHandler.js"></script>
+	<script src="Scripts/app/app.inventoryDragAndDropBindingHandler.js"></script>
+
 	<script>
 		$(function () {
 			app.init();
 		});
 	</script>
+
 </head>
 <body>
-    
+	
 
-    <div id="content">
+	<div id="content">
 		<div id="inventory" class="ui-panel">
 			<h1>inventory</h1>
 			
@@ -66,6 +76,6 @@
 		
 		<pre data-bind="text: ko.toJSON($root, null, 2)" id="viewmodel-dump"></pre>
 
-    </div>
+	</div>
 </body>
 </html>
