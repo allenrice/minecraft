@@ -1,7 +1,7 @@
 /// <reference path="../typings/console/console.d.ts" />
 /// <reference path="../typings/knockout/knockout.d.ts" />
 
-// TODO: move this 
+// TODO: move this to somewhere like app.d.ts maybe
 interface dragConfiguration {
 	what: any;
 	where: any;
