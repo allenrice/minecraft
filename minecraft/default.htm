@@ -4,12 +4,12 @@
 <head>
     <meta charset="utf-8" />
     <title>TypeScript HTML App</title>
-    <link rel="stylesheet" href="app.css" type="text/css" />
+    <link rel="stylesheet" href="Content/app.css" type="text/css" />
 
-	<script src="/Scripts/jquery-2.0.1.js"></script>
+	<script src="Scripts/jquery-2.0.1.js"></script>
 	<script src="Scripts/jquery-ui-1.10.3.js"></script>
-    <script src="/Scripts/knockout-2.2.1.js"></script>
-	<script src="/Scripts/app/app.js"></script>
+    <script src="Scripts/knockout-2.2.1.js"></script>
+	<script src="Scripts/app/app.js"></script>
 	<script>
 		$(function () {
 			app.init();
@@ -20,8 +20,15 @@
     
 
     <div id="content">
-		
 		<div id="inventory" class="ui-panel">
+			<h1>inventory</h1>
+			
+			<div data-bind="foreach: ui.inventoryTable" class="inventory-grid">
+				<div data-bind="inventoryContainer: $data"></div>
+			</div>
+		</div>
+
+		<!--<div id="inventory" class="ui-panel">
 			<h1>inventory</h1>
 			<ul data-bind="foreach: inventory">
 				<li>
@@ -32,12 +39,12 @@
 
 				</li>
 			</ul>
-		</div>
+		</div>-->
 
 		<div id="build-grid" class="ui-panel">
 			<h1>build grid</h1>
 			<div class="build-grid" data-bind="foreach: ui.buildTable">
-				<div class="build-grid-square" data-bind="drag: $data.item, drop: $root.ui.dropItem, text: name, css: { 'build-grid-square-selected': hasDropItem, 'item-in-hand' : hasDropItemInHand }"></div>
+				<div data-bind="inventoryContainer: $data"></div>
 			</div>
 		</div>
 
@@ -48,14 +55,14 @@
 			</div>
 		<!-- /ko -->
 
-		<div id="buildable-list" class="ui-panel">
+		<!--<div id="buildable-list" class="ui-panel">
 			<h1>things you can build</h1>
 			<ul data-bind="foreach: buildableItems">
 				<li>
 					<span data-bind="text: name"></span>
 				</li>
 			</ul>
-		</div>
+		</div>-->
 		
 		<pre data-bind="text: ko.toJSON($root, null, 2)" id="viewmodel-dump"></pre>
 

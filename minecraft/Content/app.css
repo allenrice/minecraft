@@ -10,6 +10,12 @@ h1 {
 	margin: 0px;
 }
 
+.inventory-grid {
+	width: 200px;
+	height: 700px;
+	background-color: #bbcc96;
+}
+
 .build-grid {
 	width: 300px;
 	height: 300px;
@@ -54,7 +60,7 @@ h1 {
 
 .ui-panel {
 	float: left;
-	width: 250px;
+	width: 200px;
 	background-color: rgba(209, 208, 208, 0.62);
 	margin: 10px;
 	border-radius: 10px;

@@ -2,107 +2,166 @@
 /// <reference path="../typings/jqueryui/jqueryui.d.ts" />
 /// <reference path="../typings/knockout/knockout.d.ts" />
 
+interface Console {
+	debug(message: any, ...optionalParams: any[]): void;
+}
+
 interface dragConfiguration {
 	what: any;
 	where: any;
 }
 
 //#region binding handlers 
-interface KnockoutBindingHandlers {
 
-	drag: any;
-	drop: Object;
+
+// this has to affect the global interface of the same name so this has to be global, this adds the binding for the following module
+interface KnockoutBindingHandlers {
+	inventoryContainer: any;
+	buildSlotContainer: any;
+};
+
+module genericContainerBinding {
+
+	/** where the actual custom bindings live, so we can call them with slightly different names and get somewhat of the same functionality */
+	var genericContainerBinding = function (element, valueAccessor, allBindingsAccessor, viewModel: app.types.ui.InventoryItemContainer, context: KnockoutBindingContext, slotType: string) {
+
+		console.debug(slotType, ".init");
+
+		var $element: JQuery = $(element).addClass("build-grid-square");
+		var value: app.types.ui.InventoryItemContainer = ko.utils.unwrapObservable(valueAccessor());
+		var $root: app.viewModel = context.$root;
+
+		ko.applyBindingsToNode(element, {
+			"drag": value,
+			"drop": $root.ui.dropItem,
+			"text": value.name,
+			"css": {
+				"build-grid-square-selected": value.hasDropItem,
+				"item-in-hand": value.hasDropItemInHand
+			}
+		}, viewModel);
+
+		// keep the tile draggable or not draggable depending on if there is something in it
+		value.item.subscribe(function (newItemValue) {
+			$element.draggable(
+				(newItemValue) ?
+					"enable" : "disable");
+		});
+
+		// this triggers the above function to disable the drag of slots without items at appstart time
+		value.item.valueHasMutated();
+	};
+
+	/** defines the possible types of containers for the generic containers binding */
+	export var containerTypes = {
+		buildTable: "buildSlotContainer",
+		inventory: "inventoryContainer"
+	};
+
+	ko.bindingHandlers.inventoryContainer = {
+		"init": function (element, valueAccessor, allBindingsAccessor, viewModel: app.types.ui.InventoryItemContainer, context: KnockoutBindingContext) {
+			genericContainerBinding(element, valueAccessor, allBindingsAccessor, viewModel, context, containerTypes.inventory);
+		}
+	};
+
+	ko.bindingHandlers.buildSlotContainer = {
+		"init": function (element, valueAccessor, allBindingsAccessor, viewModel: app.types.ui.InventoryItemContainer, context: KnockoutBindingContext) {
+			genericContainerBinding(element, valueAccessor, allBindingsAccessor, viewModel, context, containerTypes.buildTable);
+		}
+	}
 }
 
-ko.bindingHandlers.drag = {
-	"update": function (element, valueAccessor, allBindingsAccessor, viewModel) {
-		var newValue: app.types.InventoryItem = ko.utils.unwrapObservable(valueAccessor());
-		var $element = $(element);
-		var elementIsDraggable = (typeof $(element).data("ui-draggable") !== "undefined");
+// this has to affect the global interface of the same name so this has to be global, this adds the binding for the following module
+interface KnockoutBindingHandlers {
+	drag: any;
+	drop: Object;
+};
 
-		if (newValue === null && elementIsDraggable === true) {
-			// if we dont have a value and our element is draggable, then we just removed an item and we need to disable the draggable aspect of this dom node
-			$element.draggable("disable");
-		} else if (newValue !== null && elementIsDraggable === true) {
-			// if we have a value and the element is draggable, then we need enable it rather than create it
-			$element.draggable("enable");
-		} else if (newValue !== null && elementIsDraggable === false) {
-			// if we have a value and its not draggable, then someone dropped an item on this dom element for the first time, so create the draggable 
+/** we need to store some stateful information that we'd like to wrap in a closurefor these binding handlers, so we'll use a module to accomplish this */
+module inventoryDragAndDropBindingHandler {
 
-			console.log("creating draggable node");
-			var draggedObject: app.types.InventoryItem = ko.utils.unwrapObservable(valueAccessor());
-			var dragElement = $(element);
+	/** contains all the stateful information of the inventory drag and drop binding handler */
+	module state {
+		export var hitDropTarget: Boolean = false;
+		export var draggedObject: app.types.InventoryItem = null
+		export var draggedObjectFrom: app.types.ui.InventoryItemContainer = null
+	}
 
+	// here we're adding the custom binding handler because at this time, we have access to the state variable above
+	ko.bindingHandlers.drag = {
+		"init": function (element, valueAccessor, allBindingsAccessor, viewModel: app.viewModel, context: KnockoutBindingContext) {
+			console.debug("drag.init");
+
+			var draggedObjectContainer: app.types.ui.InventoryItemContainer = ko.utils.unwrapObservable(valueAccessor());
+			var dragElement: JQuery = $(element);
 			var dragOptions = {
 				"helper": "clone",
 				"revert": true,
 				"revertDuration": 0,
 				"start": function () {
-					//var draggedFrom: app.types.ui.BuildTableDropTarget = ko.dataFor(element);
-					
-					// dragged from should be a drop target w/ an x and a y
+					console.debug("drag starting");
 
-					ko.bindingHandlers.drag.state.hitDropTarget = false;
-					ko.bindingHandlers.drag.state.draggedObject = draggedObject;
-					ko.bindingHandlers.drag.state.draggedObjectFrom = ko.dataFor(element);
-					ko.bindingHandlers.drag.state.draggedObject.inHand(true);
-					//draggedObject = null;
+					// keep track of the state for the drop / stop events
+					state.hitDropTarget = false;
+					state.draggedObject = draggedObjectContainer.item();
+					state.draggedObjectFrom = draggedObjectContainer;
+					state.draggedObject.inHand(true);
 				},
 				"stop": function () {
-					if (ko.bindingHandlers.drag.state.hitDropTarget === false) {
+					console.debug("drag stopping");
+
+					if (state.hitDropTarget === false) {
 						// TODO: put this guy back where we got it 
 						// Note: we're going to have to "pick this up" from
 						// a source and have that source handy, to accomplish this
 					}
-					ko.bindingHandlers.drag.state.draggedObject.inHand(false);
-					// clear out the state since we're not maintaining it anymore
-					ko.bindingHandlers.drag.state.draggedObject =
-						ko.bindingHandlers.drag.state.hitDropTarget =
-						ko.bindingHandlers.drag.state.draggedObjectFrom = null;
 
-					//draggedObject = null;
+					// Note: we dont have to set hitDropTarget to false since thats done on drag start
+					state.draggedObject.inHand(false);
+
+					// clear out the state since we're not maintaining it anymore
+					state.draggedObject = null;
+					state.draggedObjectFrom = null;
 				},
 				"cursor": 'move'
 			};
 
 			dragElement.draggable(dragOptions).disableSelection();
 		}
-	},
-	"state": {
-		"hitDropTarget": null,
-		"draggedObject": null
-	}
-};
+	};
 
-ko.bindingHandlers.drop = {
-	"init": function (element, valueAccessor, allBindingsAccessor, viewModel) {
-		var dropElement = $(element);
-		var dropOptions: DroppableOptions = {
-			"drop": function (e: JQueryEventObject, ui) {
-				// indicate that we hit a drop target so the other drop doesnt think its a missed drop
-				ko.bindingHandlers.drag.state.hitDropTarget = true;
+	ko.bindingHandlers.drop = {
+		"init": function (element, valueAccessor, allBindingsAccessor, viewModel) {
+			console.debug("drop.init");
+			var dropElement: JQuery = $(element);
+			var dropOptions: DroppableOptions = {
+				"drop": function (e: JQueryEventObject, ui) {
+					console.debug("drop fired");
+					// indicate that we hit a drop target so the other drop doesnt think its a missed drop
+					state.hitDropTarget = true;
 
-				// call the callback in the valueAccessor with the what/where object
-				valueAccessor()({
-					"what": ko.bindingHandlers.drag.state.draggedObject,
-					"where": ko.dataFor(this)
-				});
+					// call the callback in the valueAccessor with the what/where object
+					valueAccessor()({
+						"what": state.draggedObject,
+						"where": ko.dataFor(this)
+					});
 
-				var draggedFrom: app.types.ui.BuildTableDropTarget = ko.bindingHandlers.drag.state.draggedObjectFrom;
+					var draggedFrom: app.types.ui.InventoryItemContainer = state.draggedObjectFrom;
 
-				draggedFrom.item(null);
-			},
-			"hoverClass": "build-grid-square-hover"
-		};
-		dropElement.droppable(dropOptions);
-	}
-};
+					draggedFrom.item(null);
+				},
+				"hoverClass": "build-grid-square-hover"
+			};
+			dropElement.droppable(dropOptions);
+		}
+	};
+}
 //#endregoin
 
 module app {
 
 	export var init = function (useDemoBuildTable: Boolean = true) {
-		
+
 		console.log("app.init");
 
 		app.world.init();
@@ -182,7 +241,7 @@ module app.types {
 			var _this = this;
 
 			this.qty.subscribe(function (newQty: number) {
-				console.log(_this.item.name, "qty changed to", newQty);
+				console.debug(_this.item.name, "qty changed to", newQty);
 			});
 
 			this.item = item;
@@ -194,17 +253,27 @@ module app.types {
 
 	export module ui {
 
-		/** we use instances of these to loop over the drop target area */
-		export class BuildTableDropTarget {
+		/** The type that makes up a container that holds an inventory item,  this is used specifically in the UI because its the actual slot and is shared between inventory and build table */
+		export class InventoryItemContainer {
 
 			public x: number = null;
 			public y: number = null;
+
+			/** of type string */
 			public name: KnockoutComputed = null;
+
+			/** of type app.types.InventoryItem */
 			public item: KnockoutObservableAny = ko.observable(null);
+
+			/** of type boolean */
 			public hasDropItem: KnockoutComputed = null;
+
+			/** of type boolean */
 			public hasDropItemInHand: KnockoutComputed = null;
 
 			constructor(x: number, y: number) {
+
+				// we use this so we'll have type checking in the computeds below
 				var _this = this;
 				_this.x = x;
 				_this.y = y;
@@ -217,16 +286,16 @@ module app.types {
 					else {
 						return observedItem.item.name;
 					}
-				}, _this);
+				});
 
 				_this.hasDropItem = ko.computed(function () {
 					return (_this.item() !== null);
-				}, _this);
+				});
 
 				_this.hasDropItemInHand = ko.computed(function () {
 					var thisItem: app.types.InventoryItem = _this.item();
 					return (thisItem === null) ? false : thisItem.inHand();
-				}, _this);
+				});
 			}
 		}
 	}
@@ -251,7 +320,7 @@ module app.world {
 	export var allItems: { [itemName: string]: app.types.Item; } = {};
 
 	/** the same information as allItems, but in a way that we can access it via their build matrix */
-	export var allItemsViaBuildString: { [itemName: string]: app.types.Item; } = {};
+	export var allItemsViaBuildString: { [buildMatrixAsJSON: string]: app.types.Item; } = {};
 
 	/** build all of the actual item definitions that exist in the world */
 	var buildAllWorldItems = function () {
@@ -329,7 +398,14 @@ module app.viewModel {
 			// create all of the targets with the right x/y coordinates
 			for (var i = 0; i < 3; i++) {
 				for (var j = 0; j < 3; j++) {
-					buildTable.push(new app.types.ui.BuildTableDropTarget(j, i));
+					buildTable.push(new app.types.ui.InventoryItemContainer(j, i));
+				}
+			}
+
+			// FIXME: ok so we need actual build coordinates for the build table but not the inventory table.  We'll probably split InventoryItemContainer into 2 and maybe add the x/y coordinates onto the build table version
+			for (var i = 0; i < 7; i++) {
+				for (var j = 0; j < 2; j++) {
+					inventoryTable.push(new app.types.ui.InventoryItemContainer(j, i));
 				}
 			}
 
@@ -339,13 +415,23 @@ module app.viewModel {
 				buildTable[3].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.ironIngot], 1));
 			}
 
+			inventoryTable[0].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.stick], 64))
+			inventoryTable[1].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.stone], 32))
+			inventoryTable[2].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.ironIngot], 5))
+			inventoryTable[3].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.ironIngot], 5))
+			inventoryTable[4].item(new app.types.InventoryItem(app.world.allItems[app.world.itemNames.ironIngot], 5))
+			//var addItemToInventory = function (itemName: string, qty: number) {
+			//	inventory.push();
+			//};
+
+
 			//#region tableImage computed body
 			currentBuildString = ko.computed(function () {
 
 				var buildMatrix = [[], [], []];
 
 				for (var i = 0; i < buildTable.length; i++) {
-					var buildSlot: app.types.ui.BuildTableDropTarget = buildTable[i];
+					var buildSlot: app.types.ui.InventoryItemContainer = buildTable[i];
 
 					var itemInBuildSlot: app.types.InventoryItem = buildSlot.item();
 
@@ -369,7 +455,7 @@ module app.viewModel {
 
 		/** event handler for dropping an item */
 		export var dropItem: any = function (data: dragConfiguration) {
-			var where: app.types.ui.BuildTableDropTarget = data.where;
+			var where: app.types.ui.InventoryItemContainer = data.where;
 			var what: app.types.InventoryItem = data.what;
 
 			// Note: the order of these two operations will be important, not sure which should be first but its important 
@@ -377,8 +463,11 @@ module app.viewModel {
 			what.inHand(false);
 		};
 
-		/** the list of build targets */
-		export var buildTable: app.types.ui.BuildTableDropTarget[] = [];
+		/** this is the inventory table, one item per slot on the inventory */
+		export var inventoryTable: app.types.ui.InventoryItemContainer[] = [];
+
+		/** the actual build table, one item per slot */
+		export var buildTable: app.types.ui.InventoryItemContainer[] = [];
 
 		/** the json string representation of whats on the build table */
 		export var currentBuildString: KnockoutComputed = null;
@@ -387,17 +476,17 @@ module app.viewModel {
 		export var buildableResult: KnockoutComputed = null;
 	}
 
+
+
 	export var init = function (useDemoBuildTable: Boolean): void {
 		console.log("app.viewModel.init");
 
 		app.viewModel.ui.init(useDemoBuildTable);
 
-		addItemToInventory(app.world.itemNames.stone, 1);
-		addItemToInventory(app.world.itemNames.ironIngot, 1);
-		addItemToInventory(app.world.itemNames.stick, 2);
+
 
 		allItemsWithDependencies = ko.computed(function () {
-			console.log("computed: allItemsWithDependencies");
+			console.debug("computed: allItemsWithDependencies");
 
 			var results: app.types.Item[] = [];
 
@@ -419,10 +508,17 @@ module app.viewModel {
 		});
 
 		//#region inventoryLookup computed body
+		
 		inventoryLookup = ko.computed(function () {
 			console.log("computed: inventoryLookup");
 
-			var currentInventory: app.types.InventoryItem[] = inventory();
+			var currentInventory: app.types.InventoryItem[] = [];
+			for (var i = 0; i < ui.inventoryTable.length; i++) {
+				var item: app.types.InventoryItem = ui.inventoryTable[i].item();
+				if (item) {
+					currentInventory.push(item);
+				}
+			}
 
 			var inventoryLookupObject: { [itemName: string]: app.types.InventoryItem; } = {};
 
@@ -457,21 +553,18 @@ module app.viewModel {
 		//#endregion
 
 
+
 	};
 
-
-	export var inventory: KnockoutObservableArray = ko.observableArray([]);
-
-	export var inventoryLookup: KnockoutComputed;
 
 	// FIXME: This is a computed representation of all the items in app.world.allItems and it shouldnt be a computed and it shouldnt be on the viewmodel
 	export var allItemsWithDependencies: KnockoutComputed;
 
+	/** type: app.types.Item[], it is a list of everything we have the inventory to build (directly, not indirectly) */
 	export var buildableItems: KnockoutComputed;
-
-	var addItemToInventory = function (itemName: string, qty: number) {
-		inventory.push(new app.types.InventoryItem(app.world.allItems[itemName], qty));
-	};
+	
+	/** type: { [itemName: string]: app.types.InventoryItem; }, it allows us to have a dictionary of our inventory */
+	export var inventoryLookup: KnockoutComputed;
 
 	var canBuildItem = function (item: app.types.Item, currentInventory: { [itemName: string]: app.types.InventoryItem; }) {
 
