@@ -7,16 +7,16 @@ module app.types.ui {
 	export class InventoryItemContainer {
 
 		/** of type string, gives u a convenient way to bind to item.name() */
-		public name: KnockoutComputed = null;
+		public name: KnockoutComputed<string> = null;
 
 		/** of type app.types.InventoryItem */
-		public item: KnockoutObservableAny = ko.observable(null);
+		public item: KnockoutObservable<app.types.InventoryItem> = ko.observable(null);
 
 		/** of type boolean, gives u a convenient way to bind to item() !== null */
-		public hasDropItem: KnockoutComputed = null;
+		public hasDropItem: KnockoutComputed<bool> = null;
 
 		/** of type boolean, gives u a convenient way to bind to item.inHand() */
-		public hasDropItemInHand: KnockoutComputed = null;
+		public hasDropItemInHand: KnockoutComputed<bool> = null;
 
 		constructor() {
 

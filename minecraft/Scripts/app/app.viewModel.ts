@@ -55,9 +55,9 @@ module app.viewModel {
 				var currentInventoryItem = currentInventory[i];
 				inventoryLookupObject[currentInventoryItem.item.name] = currentInventoryItem;
 			}
-
 			return inventoryLookupObject;
 		});
+		
 		//#endregion
 
 		//#region buildableItems computed body
@@ -68,7 +68,7 @@ module app.viewModel {
 
 			var itemsWithDependencies: app.types.Item[] = allItemsWithDependencies();
 
-			var inventoryLookupObject: { [itemName: string]: app.types.InventoryItem; } = inventoryLookup();
+			var inventoryLookupObject = inventoryLookup();
 
 			for (var i = 0; i < itemsWithDependencies.length; i++) {
 				var currentItem = itemsWithDependencies[i];
@@ -79,20 +79,24 @@ module app.viewModel {
 			}
 			return results;
 		});
-		//#endregion
+		//#endregion 
 
 	};
 
-
 	// FIXME: This is a computed representation of all the items in app.world.allItems and it shouldnt be a computed and it shouldnt be on the viewmodel
-	export var allItemsWithDependencies: KnockoutComputed;
+	export var allItemsWithDependencies: KnockoutComputed<app.types.Item[]>;
 
-	/** type: app.types.Item[], it is a list of everything we have the inventory to build (directly, not indirectly) */
-	export var buildableItems: KnockoutComputed;
+	/** it is a list of everything we have the inventory to build (directly, not indirectly) */
+	export var buildableItems: KnockoutComputed<app.types.Item[]>;
 
-	/** type: { [itemName: string]: app.types.InventoryItem; }, it allows us to have a dictionary of our inventory */
-	export var inventoryLookup: KnockoutComputed;
+	/** allows us to have a dictionary of our inventory */
+	export var inventoryLookup: KnockoutComputed<{ [itemName: string]: app.types.InventoryItem; }>;
 
+	inventoryLookup.subscribe(function (newValue) {
+	
+	});
+
+	/** determines if we can build a specific item, given a dictionary of items in the dictionary */
 	var canBuildItem = function (item: app.types.Item, currentInventory: { [itemName: string]: app.types.InventoryItem; }) {
 
 		// we cant build an item without dependencies
@@ -123,9 +127,6 @@ module app.viewModel {
 
 		return true;
 	}
-
-
-
 
 }
 

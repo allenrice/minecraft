@@ -49,7 +49,7 @@ module app.types {
 			for (var i = 0; i < this.buildMatrix.length; i++) {
 				for (var j = 0; j < this.buildMatrix[i].length; j++) {
 
-					var thisItemName: string = this.buildMatrix[i][j];
+					var thisItemName = this.buildMatrix[i][j];
 
 					if (thisItemName === null || thisItemName === "") { continue; }
 
@@ -65,14 +65,14 @@ module app.types {
 	/** represents an item in the inventory, in inventory it has qty and will probably have more later on */
 	export class InventoryItem {
 
-		public qty: KnockoutObservableNumber = ko.observable(0);
-		public inHand: KnockoutObservableBool = ko.observable(false);
+		public qty: KnockoutObservable<number> = ko.observable(0);
+		public inHand: KnockoutObservable<bool> = ko.observable(false);
 		public item: Item = null;
 
 		constructor(item: Item, qty: number) {
 			var _this = this;
 
-			this.qty.subscribe(function (newQty: number) {
+			this.qty.subscribe(function (newQty) {
 				console.debug(_this.item.name, "qty changed to", newQty);
 			});
 

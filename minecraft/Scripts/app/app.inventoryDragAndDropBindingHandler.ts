@@ -17,7 +17,7 @@ module dt.inventoryDragAndDropBindingHandler {
 
 	// here we're adding the custom binding handler because at this time, we have access to the state variable above
 	ko.bindingHandlers.drag = {
-		"init": function (element, valueAccessor, allBindingsAccessor, viewModel: app.viewModel, context: KnockoutBindingContext) {
+		"init": function (element, valueAccessor, allBindingsAccessor, viewModel, context: KnockoutBindingContext) {
 			console.debug("drag.init");
 
 			var draggedObjectContainer: app.types.ui.InventoryItemContainer = ko.utils.unwrapObservable(valueAccessor());

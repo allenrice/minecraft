@@ -14,7 +14,7 @@ module dt.genericContainerBindingHandler {
 
 		var $element: JQuery = $(element).addClass("build-grid-square");
 		var value: app.types.ui.InventoryItemContainer = ko.utils.unwrapObservable(valueAccessor());
-		var $root: app.viewModel = context.$root;
+		var $root: any = context.$root;
 
 		ko.applyBindingsToNode(element, {
 			"drag": value,
