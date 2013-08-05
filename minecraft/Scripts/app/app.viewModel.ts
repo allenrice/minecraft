@@ -1,8 +1,4 @@
-/// <reference path="../typings/knockout/knockout.d.ts" />
-/// <reference path="../typings/console/console.d.ts" />
 /// <reference path="app.viewModel.ui.ts" />
-/// <reference path="app.world.ts" />
-
 
 
 module app.viewModel {

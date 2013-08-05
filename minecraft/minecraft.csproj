@@ -61,12 +61,15 @@
     <Content Include="Scripts\jquery-ui-1.10.3.js" />
     <Content Include="Scripts\knockout-2.2.1.js" />
     <TypeScriptCompile Include="Scripts\typings\console\console.d.ts" />
+    <Content Include="Scripts\r.js" />
+    <Content Include="Scripts\require.js" />
     <Content Include="Scripts\typings\jasmine\jasmine.d.ts" />
     <Content Include="Scripts\typings\jqueryui\jqueryui.d.ts" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
     <Content Include="Scripts\typings\knockout\knockout.amd.d.ts" />
     <Content Include="Scripts\typings\knockout\knockout.d.ts" />
     <Content Include="Scripts\jquery-2.0.1.js" />
+    <Content Include="Scripts\typings\requirejs\require.d.ts" />
     <Content Include="web.config" />
     <Content Include="jasmine.htm" />
     <None Include="web.Debug.config">
