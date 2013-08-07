@@ -1,14 +1,13 @@
 /// <reference path="../typings/console/console.d.ts" />
 /// <reference path="../typings/knockout/knockout.d.ts" />
 
-
 // TODO: move this to somewhere like app.d.ts maybe
-export interface dragConfiguration {
+interface dragConfiguration {
 	what: any;
 	where: any;
 }
 
-export module app.types {
+module app.types {
 
 	/** represents a single item in the game, includes dependencies, names, etc */
 	export class Item {

@@ -56,14 +56,6 @@
     <Content Include="Scripts\app\app.inventoryDragAndDropBindingHandler.js">
       <DependentUpon>app.inventoryDragAndDropBindingHandler.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Scripts\app\main.ts" />
-    <Content Include="Scripts\app\main.js">
-      <DependentUpon>main.ts</DependentUpon>
-    </Content>
-    <TypeScriptCompile Include="Scripts\app\test.ts" />
-    <Content Include="Scripts\app\test.js">
-      <DependentUpon>test.ts</DependentUpon>
-    </Content>
     <Content Include="Scripts\jasmine\jasmine-html.js" />
     <Content Include="Scripts\jasmine\jasmine.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.js" />

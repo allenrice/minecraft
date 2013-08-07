@@ -1,8 +1,5 @@
-/// <reference path="../typings/console/console.d.ts" />
-
-import appTypes = module("app.types");
-
-export module app.world {
+/// <reference path="app.types.ts" />
+module app.world {
 
 	/** all of the items in the world are listed here. this is used to access items within allitems */
 	export var itemNames = {
@@ -18,10 +15,10 @@ export module app.world {
 	};
 
 	/** all the items in the world are stored / defined here, to look them up, see: itemNames */
-	export var allItems: { [itemName: string]: appTypes.app.types.Item; } = {};
+	export var allItems: { [itemName: string]: app.types.Item; } = {};
 
 	/** the same information as allItems, but in a way that we can access it via their build matrix */
-	export var allItemsViaBuildString: { [buildMatrixAsJSON: string]: appTypes.app.types.Item; } = {};
+	export var allItemsViaBuildString: { [buildMatrixAsJSON: string]: app.types.Item; } = {};
 
 	/** build all of the actual item definitions that exist in the world */
 	var buildAllWorldItems = function () {
@@ -30,8 +27,8 @@ export module app.world {
 		// this is just a helper to cut down on repetitive code, given an item name and a build matrix, it will add a new Item with a proper dependency to the all items list
 		var addItem = function (itemName: string, buildMatrix: string[][] = null) {
 
-			var dependency: appTypes.app.types.Dependency = (buildMatrix === null) ? null : new appTypes.app.types.Dependency(buildMatrix);
-			var newItem = new appTypes.app.types.Item(itemName, dependency);
+			var dependency: app.types.Dependency = (buildMatrix === null) ? null : new app.types.Dependency(buildMatrix);
+			var newItem = new app.types.Item(itemName, dependency);
 			allItems[itemName] = newItem;
 
 			if (dependency !== null) {

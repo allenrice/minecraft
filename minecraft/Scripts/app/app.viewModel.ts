@@ -1,30 +1,26 @@
-/// <reference path="../typings/console/console.d.ts" />
-/// <reference path="../typings/knockout/knockout.d.ts" />
+/// <reference path="app.viewModel.ui.ts" />
 
-import vmUI = module("app.viewModel.ui");
-import appTypes = module("app.types");
-import appWorld = module("app.world");
 
-export module app.viewModel {
+module app.viewModel {
 
 	export var init = function (useDemoBuildTable: Boolean): void {
 		console.log("app.viewModel.init");
 
-		vmUI.app.viewModel.ui.init(useDemoBuildTable);
+		app.viewModel.ui.init(useDemoBuildTable);
 
 		//#region allItemsWithDependencies
 		allItemsWithDependencies = ko.computed(function () {
 			console.debug("computed: allItemsWithDependencies");
 
-			var results: appTypes.app.types.Item[] = [];
+			var results: app.types.Item[] = [];
 
-			for (var itemName in appWorld.app.world.allItems) {
+			for (var itemName in app.world.allItems) {
 
 				// just a safety check
-				if (!appWorld.app.world.allItems.hasOwnProperty(itemName)) { continue; }
+				if (!app.world.allItems.hasOwnProperty(itemName)) { continue; }
 
 				// get the actual item
-				var item: appTypes.app.types.Item = appWorld.app.world.allItems[itemName];
+				var item: app.types.Item = app.world.allItems[itemName];
 
 				// make sure its an item that can be built
 				if (item.dependencies === null) { continue; }
@@ -41,15 +37,15 @@ export module app.viewModel {
 		inventoryLookup = ko.computed(function () {
 			console.log("computed: inventoryLookup");
 
-			var currentInventory: appTypes.app.types.InventoryItem[] = [];
-			for (var i = 0; i < vmUI.app.viewModel.ui.inventoryTable.length; i++) {
-				var item: appTypes.app.types.InventoryItem = vmUI.app.viewModel.ui.inventoryTable[i].item();
+			var currentInventory: app.types.InventoryItem[] = [];
+			for (var i = 0; i < ui.inventoryTable.length; i++) {
+				var item: app.types.InventoryItem = ui.inventoryTable[i].item();
 				if (item) {
 					currentInventory.push(item);
 				}
 			}
 
-			var inventoryLookupObject: { [itemName: string]: appTypes.app.types.InventoryItem; } = {};
+			var inventoryLookupObject: { [itemName: string]: app.types.InventoryItem; } = {};
 
 			for (var i = 0; i < currentInventory.length; i++) {
 				var currentInventoryItem = currentInventory[i];
@@ -64,11 +60,11 @@ export module app.viewModel {
 		buildableItems = ko.computed(function () {
 			console.log("computed: buildableItems");
 
-			var results: appTypes.app.types.Item[] = [];
+			var results: app.types.Item[] = [];
 
-			var itemsWithDependencies: appTypes.app.types.Item[] = allItemsWithDependencies();
+			var itemsWithDependencies: app.types.Item[] = allItemsWithDependencies();
 
-			var inventoryLookupObject: { [itemName: string]: appTypes.app.types.InventoryItem; } = inventoryLookup();
+			var inventoryLookupObject: { [itemName: string]: app.types.InventoryItem; } = inventoryLookup();
 
 			for (var i = 0; i < itemsWithDependencies.length; i++) {
 				var currentItem = itemsWithDependencies[i];
@@ -93,7 +89,7 @@ export module app.viewModel {
 	/** type: { [itemName: string]: app.types.InventoryItem; }, it allows us to have a dictionary of our inventory */
 	export var inventoryLookup: KnockoutComputed;
 
-	var canBuildItem = function (item: appTypes.app.types.Item, currentInventory: { [itemName: string]: appTypes.app.types.InventoryItem; }) {
+	var canBuildItem = function (item: app.types.Item, currentInventory: { [itemName: string]: app.types.InventoryItem; }) {
 
 		// we cant build an item without dependencies
 		if (item.dependencies === null) { throw "items without dependencies (" + item.name + ") should not be built"; }
