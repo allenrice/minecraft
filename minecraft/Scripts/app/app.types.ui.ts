@@ -1,7 +1,12 @@
-/// <reference path="app.types.ts" />
+/// <reference path="../typings/console/console.d.ts" />
+/// <reference path="../typings/knockout/knockout.d.ts" />
+
+
+import appTypes = module("app.types");
+            
 
 /** contains all types specifically related to something that is a UI element, like a container in the inventory table or build table */
-module app.types.ui {
+export module app.types.ui {
 
 	/** The type that makes up a container that holds an inventory item,  this is used specifically in the UI because its the actual slot and is shared between inventory and build table */
 	export class InventoryItemContainer {
@@ -24,8 +29,8 @@ module app.types.ui {
 			var _this = this;
 
 			_this.name = ko.computed(function () {
-				var observedItem: app.types.InventoryItem = _this.item();
-				return (observedItem === null)  ? "": observedItem.item.name;	
+				var observedItem: appTypes.app.types.InventoryItem = _this.item();
+				return (observedItem === null) ? "" : observedItem.item.name;
 			});
 
 			_this.hasDropItem = ko.computed(function () {
@@ -33,7 +38,7 @@ module app.types.ui {
 			});
 
 			_this.hasDropItemInHand = ko.computed(function () {
-				var thisItem: app.types.InventoryItem = _this.item();
+				var thisItem: appTypes.app.types.InventoryItem = _this.item();
 				return (thisItem === null) ? false : thisItem.inHand();
 			});
 		}
