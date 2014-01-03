@@ -1,8 +1,9 @@
 /// <reference path="app.ts" />
 // this has to affect the global interface of the same name so this has to be global, this adds the binding for the following module
+
 interface KnockoutBindingHandlers {
-	inventoryContainer: any;
-	buildSlotContainer: any;
+	inventoryContainer: KnockoutBindingHandler;
+	buildSlotContainer: KnockoutBindingHandler;
 };
 
 module dt.genericContainerBindingHandler {
@@ -13,7 +14,7 @@ module dt.genericContainerBindingHandler {
 		console.debug(slotType, ".init");
 
 		var $element: JQuery = $(element).addClass("build-grid-square");
-		var value: app.types.ui.InventoryItemContainer = ko.utils.unwrapObservable(valueAccessor());
+		var value: app.types.ui.InventoryItemContainer = ko.utils.unwrapObservable<app.types.ui.InventoryItemContainer>(valueAccessor());
 		var $root: any = context.$root;
 
 		ko.applyBindingsToNode(element, {

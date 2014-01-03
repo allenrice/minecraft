@@ -13,10 +13,10 @@ module app.types.ui {
 		public item: KnockoutObservable<app.types.InventoryItem> = ko.observable(null);
 
 		/** of type boolean, gives u a convenient way to bind to item() !== null */
-		public hasDropItem: KnockoutComputed<bool> = null;
+		public hasDropItem: KnockoutComputed<boolean> = null;
 
 		/** of type boolean, gives u a convenient way to bind to item.inHand() */
-		public hasDropItemInHand: KnockoutComputed<bool> = null;
+		public hasDropItemInHand: KnockoutComputed<boolean> = null;
 
 		constructor() {
 

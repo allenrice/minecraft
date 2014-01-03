@@ -66,7 +66,7 @@ module app.types {
 	export class InventoryItem {
 
 		public qty: KnockoutObservable<number> = ko.observable(0);
-		public inHand: KnockoutObservable<bool> = ko.observable(false);
+		public inHand: KnockoutObservable<boolean> = ko.observable(false);
 		public item: Item = null;
 
 		constructor(item: Item, qty: number) {

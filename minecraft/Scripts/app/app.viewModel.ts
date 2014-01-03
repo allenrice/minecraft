@@ -92,10 +92,6 @@ module app.viewModel {
 	/** allows us to have a dictionary of our inventory */
 	export var inventoryLookup: KnockoutComputed<{ [itemName: string]: app.types.InventoryItem; }>;
 
-	inventoryLookup.subscribe(function (newValue) {
-	
-	});
-
 	/** determines if we can build a specific item, given a dictionary of items in the dictionary */
 	var canBuildItem = function (item: app.types.Item, currentInventory: { [itemName: string]: app.types.InventoryItem; }) {
 

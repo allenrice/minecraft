@@ -1,8 +1,8 @@
 /// <reference path="app.ts" />
 // this has to affect the global interface of the same name so this has to be global, this adds the binding for the following module
 interface KnockoutBindingHandlers {
-	drag: any;
-	drop: Object;
+	drag: KnockoutBindingHandler;
+	drop: KnockoutBindingHandler;
 };
 
 /** we need to store some stateful information that we'd like to wrap in a closurefor these binding handlers, so we'll use a module to accomplish this */
@@ -20,7 +20,7 @@ module dt.inventoryDragAndDropBindingHandler {
 		"init": function (element, valueAccessor, allBindingsAccessor, viewModel, context: KnockoutBindingContext) {
 			console.debug("drag.init");
 
-			var draggedObjectContainer: app.types.ui.InventoryItemContainer = ko.utils.unwrapObservable(valueAccessor());
+			var draggedObjectContainer: app.types.ui.InventoryItemContainer = ko.utils.unwrapObservable<app.types.ui.InventoryItemContainer>(valueAccessor());
 			var dragElement: JQuery = $(element);
 			var dragOptions = {
 				"helper": "clone",
@@ -62,7 +62,7 @@ module dt.inventoryDragAndDropBindingHandler {
 		"init": function (element, valueAccessor, allBindingsAccessor, viewModel) {
 			console.debug("drop.init");
 			var dropElement: JQuery = $(element);
-			var dropOptions: DroppableOptions = {
+			var dropOptions: JQueryUI.DroppableOptions = {
 				"drop": function (e: JQueryEventObject, ui) {
 					console.debug("drop fired");
 					// indicate that we hit a drop target so the other drop doesnt think its a missed drop
