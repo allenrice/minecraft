@@ -5,6 +5,7 @@ bower_components/
 bower_modules/
 bower_modules
 **/bower_modules/*
+dist/
 
 # User-specific files
 *.suo
@@ -73,3 +74,26 @@ node_modules
 
 # Users Environment Variables
 .lock-wscript
+*.map
+minecraft/src/test/SpecRunner.karma.js
+minecraft/src/test/SpecRunner.browser.js
+minecraft/src/test/components/demo-application-tests.js
+minecraft/src/test/components/debug.js
+minecraft/src/test/all-tests.js
+minecraft/src/Enums.js
+minecraft/src/components/sprite-dump/sprite-dump.js
+minecraft/src/components/references-page/references-page.js
+minecraft/src/components/minecraft-build-table/world.js
+minecraft/src/components/minecraft-build-table/viewModel.ui.js
+minecraft/src/components/minecraft-build-table/viewModel.js
+minecraft/src/components/minecraft-build-table/types.ui.js
+minecraft/src/app/startup.js
+minecraft/src/components/demo-application/demo-application.js
+minecraft/src/components/demo-application/router.js
+minecraft/src/components/demo-page/demo-page.js
+minecraft/src/components/glyph-dump/glyph-dump.js
+minecraft/src/components/home-page/home-page.js
+minecraft/src/components/minecraft-build-table/bindings/genericContainerBindingHandler.js
+minecraft/src/components/minecraft-build-table/bindings/inventoryDragAndDropBindingHandler.js
+minecraft/src/components/minecraft-build-table/minecraft-build-table.js
+minecraft/src/components/minecraft-build-table/types.js
