@@ -1,0 +1,31 @@
+<div id="content" data-bind="with: appViewModel">   
+
+
+    <div id="inventory" class="ui-panel">
+        <h1>inventory</h1>
+
+        <div data-bind="foreach: ui.inventoryTable" class="inventory-grid">
+            <div data-bind="inventoryContainer: $data"></div>
+        </div>
+    </div>
+
+
+    <div id="build-grid" class="ui-panel">
+        <h1>build grid</h1>
+        <div class="build-grid" data-bind="foreach: ui.buildTable">
+            <div data-bind="inventoryContainer: $data"></div>
+        </div>
+    </div>
+
+
+    <!-- ko with: ui.buildableResult -->
+    <div id="buildable-result" class="ui-panel">
+        <h1>you've built a <span data-bind="text: name"></span></h1>
+    </div>
+    <!-- /ko -->
+
+
+	<debug params="data: $parent"></debug>
+
+
+</div>
